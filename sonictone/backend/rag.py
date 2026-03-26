@@ -149,15 +149,16 @@ def ingest_data():
         plugin_docs, plugin_ids, plugin_metas = [], [], []
         for i, plugin in enumerate(plugins):
             # Flatten the plugin object into a plain-text document for embedding
-            doc = f"""Plugin: {plugin['plugin']}
-Type: {plugin['type']}
-Controls: {json.dumps(plugin['controls'], indent=2)}
+            controls = plugin.get('controls', {})
+            doc = f"""Plugin: {plugin.get('plugin', 'Unknown')}
+Type: {plugin.get('type', 'Unknown')}
+Controls: {json.dumps(controls, indent=2)}
 """
-            if "typical_ranges" in plugin:
+            if plugin.get("typical_ranges"):
                 doc += f"Typical Ranges: {json.dumps(plugin['typical_ranges'], indent=2)}"
             plugin_docs.append(doc)
             plugin_ids.append(f"plugin_{i}")
-            plugin_metas.append({"plugin": plugin["plugin"], "type": plugin["type"]})
+            plugin_metas.append({"plugin": plugin.get("plugin", "Unknown"), "type": plugin.get("type", "Unknown")})
 
         if plugin_docs:
             plugin_collection.upsert(
