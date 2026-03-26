@@ -2,7 +2,6 @@ fastapi
 uvicorn[standard]
 chromadb
 groq
-sentence-transformers
 python-multipart
 sse-starlette
 tinydb
