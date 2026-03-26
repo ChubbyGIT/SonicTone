@@ -175,6 +175,12 @@ Controls: {json.dumps(controls, indent=2)}
     if tone_file.exists():
         bands = parse_tone_reference(tone_file)
 
+        # Deduplicate by ID — keep last occurrence if the parser emits the same ID twice
+        seen = {}
+        for b in bands:
+            seen[b['id']] = b
+        bands = list(seen.values())
+
         band_docs  = [b['document'] for b in bands]
         band_ids   = [b['id']       for b in bands]
         band_metas = [{'band': b['band'], 'genre': b['genre']} for b in bands]
