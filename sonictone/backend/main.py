@@ -67,10 +67,22 @@ from chat_store import save_message, list_chats, get_chat     # local JSON persi
 
 app = FastAPI(title="SonicTone AI — Sonic Engine")
 
-# Allow the Vite dev server to call the backend without CORS errors
+# Allow the Vite dev server AND the production Vercel frontend to call the backend.
+# Set ALLOWED_ORIGIN in Railway env vars to your Vercel URL, e.g.:
+#   https://sonictone.vercel.app
+# Multiple origins can be comma-separated: "https://sonictone.vercel.app,https://www.sonictone.vercel.app"
+_raw_origins = os.environ.get("ALLOWED_ORIGIN", "")
+_extra_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
+allow_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    *_extra_origins,
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
